@@ -17,7 +17,6 @@ const api_url_indo_meninggal = 'https://api.kawalcorona.com/meninggal';
 // api resouces
 
 chartIndo();
-dataGobal();
 
 async function chartIndo(){
   const data = await dataNowIndo();
