@@ -10,10 +10,10 @@ $(window).scroll(function(e) {
 // api resouces
 const api_url = 'https://api.kawalcorona.com/';
 const api_url_indo = 'https://api.kawalcorona.com/indonesia/';
-const api_url_prov = 'https://api.kawalcorona.com/indonesia/provinsi';
-const api_url_indo_positif = 'https://api.kawalcorona.com/positif';
-const api_url_indo_sembuh = 'https://api.kawalcorona.com/sembuh';
-const api_url_indo_meninggal = 'https://api.kawalcorona.com/meninggal';
+const api_url_prov = 'https://api.kawalcorona.com/indonesia/provinsi/';
+const api_url_indo_positif = 'https://api.kawalcorona.com/positif/';
+const api_url_indo_sembuh = 'https://api.kawalcorona.com/sembuh/';
+const api_url_indo_meninggal = 'https://api.kawalcorona.com/meninggal/';
 // api resouces
 
 chartIndo();
