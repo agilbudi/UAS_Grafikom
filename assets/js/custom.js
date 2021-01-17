@@ -65,7 +65,9 @@ async function chartIndo(){
 async function dataNowIndo() {
     const dataIndo = [];
 
-    const response = await fetch(api_url_indo);
+    const response = await fetch(api_url_indo,{
+      credentials: "include"
+    });
     const data = await response.json();
     data.forEach(row =>{
       dataIndo.push(parseInt(row.positif.replace(/,/g, '')));
