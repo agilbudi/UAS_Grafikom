@@ -8,19 +8,22 @@ $(window).scroll(function(e) {
 });
 
 // api resouces
-const api_url = 'https://api.kawalcorona.com/';
-const api_url_indo = 'https://api.kawalcorona.com/indonesia/';
+const api_url = 'https://api.kawalcorona.com';
+const api_url_indo = 'https://api.kawalcorona.com/indonesia';
 const api_url_prov = 'https://api.kawalcorona.com/indonesia/provinsi/';
-const api_url_indo_positif = 'https://api.kawalcorona.com/positif/';
-const api_url_indo_sembuh = 'https://api.kawalcorona.com/sembuh/';
-const api_url_indo_meninggal = 'https://api.kawalcorona.com/meninggal/';
+const api_url_global_positif = 'https://api.kawalcorona.com/positif/';
+const api_url_global_sembuh = 'https://api.kawalcorona.com/sembuh/';
+const api_url_global_meninggal = 'https://api.kawalcorona.com/meninggal/';
 // api resouces
 
 chartIndo();
+chartGlobal();
 
 async function chartIndo(){
   const data = await dataNowIndo();
-  const ctx = document.getElementById('myChart').getContext('2d');
+  var bacgroundColor = ['rgba(255, 170, 33, 0.7)','rgba(71, 142, 214, 0.7)','rgba(33, 255, 63, 0.7)','rgba(245, 27, 27, 0.7)'];
+  var borderColor = ['rgba(255, 170, 33, 1)','rgba(71, 142, 214, 1)','rgba(33, 255, 63, 1)','rgba(245, 27, 27, 1)'];
+  const ctx = document.getElementById('chartIndo').getContext('2d');
   const myChart = new Chart(ctx, {
   type: 'doughnut',
   data: {
@@ -28,18 +31,8 @@ async function chartIndo(){
       datasets: [{
           label: 'Covid 19 di Indonesia',
           data: data.dataIndo,
-          backgroundColor: [
-              'rgba(255, 170, 33, 0.7)',
-              'rgba(71, 142, 214, 0.7)',
-              'rgba(33, 255, 63, 0.7)',
-              'rgba(245, 27, 27, 0.7)'
-          ],
-          borderColor: [
-              'rgba(255, 170, 33, 1)',
-              'rgba(71, 142, 214, 1)',
-              'rgba(33, 255, 63, 1)',
-              'rgba(245, 27, 27, 1)'
-          ],
+          backgroundColor: bacgroundColor,
+          borderColor: borderColor,
           borderWidth: 1
       }]
       },
@@ -61,10 +54,53 @@ async function chartIndo(){
         }
   });
 }
+async function chartGlobal(){
+  const data = await dataGobal();
+  var backgroundColor = ['rgba(255, 170, 33, 0.7)','rgba(33, 255, 63, 0.7)','rgba(245, 27, 27, 0.7)'];
+  var borderColor = ['rgba(255, 170, 33, 1)','rgba(33, 255, 63, 1)','rgba(245, 27, 27, 1)'];
+
+  const ctx = document.getElementById('chartGlobal').getContext('2d');
+  const myChart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+      labels: ['Positif', 'Sembuh', 'Meninggal'],
+      datasets: [
+        {
+          label: 'Total',
+          data: data.dataGlobal,
+          backgroundColor: backgroundColor,
+          borderColor: borderColor,
+          borderWidth: 1
+        }
+    ]
+      },
+        options: {
+          layout: {
+            padding: {
+                left: 5,
+                right: 5,
+                top: 20,
+                bottom: 5
+            }
+          },
+          legend: {
+            display: false
+          },
+          scales: {
+            yAxes: [{
+                ticks: {
+                    callback: function(value, index, values) {
+                        return value + '.000';
+                    }
+                }
+            }]
+        }
+        }
+  });
+}
 
 async function dataNowIndo() {
     const dataIndo = [];
-
     const response = await fetch(api_url_indo);
     const data = await response.json();
     data.forEach(row =>{
@@ -77,13 +113,18 @@ async function dataNowIndo() {
 }
 
 async function dataGobal() {
-    const response = await fetch(api_url);
-    const data = await response.json();
-    data.forEach(row => {
-        const negara = row.attributes.Country_Region;
-        const positif = row.attributes.Confirmed;
-        const mati = row.attributes.Deaths;
-        const sembuh = row.attributes.Recovered;
-        const dirawat = row.attributes.Active;
-    }); 
+    const dataGlobal = [];
+
+    const positif = await fetch(api_url_global_positif);
+    const sembuh = await fetch(api_url_global_sembuh);
+    const mati = await fetch(api_url_global_meninggal);
+    const dataPositif = await positif.json();
+    const dataSembuh = await sembuh.json();
+    const dataMati = await mati.json();
+
+    dataGlobal.push(parseFloat(dataPositif.value.replace(/,/g, '.')));
+    dataGlobal.push(parseFloat(dataSembuh.value.replace(/,/g, '.')));
+    dataGlobal.push(parseFloat(dataMati.value.replace(/,/g, '.')));
+    return{dataGlobal};
 }
+
